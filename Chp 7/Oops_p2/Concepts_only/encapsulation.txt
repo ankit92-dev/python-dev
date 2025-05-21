@@ -1,0 +1,34 @@
+# 2. Encapsulation
+# Wrapping data and methods into a single unit and protecting data from outside access.
+It's just a concept nothing more;
+I mean just covering codes in class is aslo encapsulation or making some attribute private
+
+
+
+"""#Example:
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.__age = age  # private variable
+
+    def display(self):
+        print(f"Name: {self.name}, Age: {self.__age}")
+
+    def get_age(self):
+        return self.__age
+
+    def set_age(self, age):
+        if age > 0:
+            self.__age = age
+
+p = Person("Alice", 25)
+p.display()
+# print(p.__age)  # Error: private attribute
+print(p.get_age())  # 25
+p.set_age(30)
+print(p.get_age())  # 30
+
+"""
+"""Key Points:
+__age is private (name mangling).
+"""""""""

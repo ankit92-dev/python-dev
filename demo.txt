@@ -1,0 +1,2 @@
+Line 1: Written with w+ mode
+Line 2: Appended with a+ mode

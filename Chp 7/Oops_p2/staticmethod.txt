@@ -1,0 +1,24 @@
+In @staticmethod decorator:(It is a function inside the class, which doesn't/shouldn't contain any attributes of objects)
+Example:-
+@staticmethod
+    def start():
+        print("Car started...") #This doesn't contain any attributes, it just use for printing whatever needed.
+
+
+No self (no instance data)
+No cls (no class data)
+It's just a regular function placed inside a class for organizational reasons.
+
+Key Point:
+
+A @staticmethod behaves just like a normal function but lives in the class. It cannot access or modify:
+Instance attributes (self.attribute)
+Class attributes (cls.attribute)
+
+Quick Contrast:
+
+Method Type	    First Parameter	    Can Access Instance (self)	    Can Access Class (cls)
+
+Instance Method	   self	                 Yes	                    Yes (via self._class_)
+Class Method	   cls	                 No	                        Yes
+Static Method	   None	                 No	                        No

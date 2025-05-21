@@ -1,0 +1,19 @@
+6. File Object Methods:-
+
+Once you open a file, you can use:
+
+read(size) – Reads up to size characters (or bytes in binary).
+
+readline() – Reads one line.
+
+readlines() – Reads all lines into a list.
+
+write(string) – Writes string to file.
+
+writelines(list) – Writes a list of strings.
+
+seek(offset) – Moves file pointer to a specific byte.
+
+tell() – Returns current position of file pointer.
+
+close() – Closes the file.

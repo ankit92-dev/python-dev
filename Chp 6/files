@@ -1,0 +1,27 @@
+Files:- 
+The is a file mode, and it tells Python how you want to open the file.
+#Syntax:-
+file_object = open("filename", "mode", encoding="encoding is optional")
+
+Common File Modes in Python:
+
+"r"	:  Read Only (default): Opens file for reading. File must exist.
+"w"	:  Write Only: Opens file for writing. If it exists, it will be overwritten.
+"a"	:  Append Only: Opens file for writing at the end. Creates file if it doesn't exist.
+"r+":  Read and write. File must exist.
+"w+":  Write and read. Overwrites if file exists.
+"a+":  Append and read. Creates file if it doesn’t exist.
+
+Summary:-
+Mode	Read  Write	File must exist?  Clears existing content?
+
+"r"	    Yes	    No	     Yes	            No
+"w"	    No	    Yes	     No	                Yes
+"r+"	Yes	    Yes	     Yes	            No
+"w+"	Yes	    Yes	     No	                Yes
+
+
+You can also add b for binary files (like images or audio):
+
+"rb" – read binary
+"wb" – write binary
