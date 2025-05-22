@@ -18,7 +18,7 @@ print("2.Subtract")
 print("3.Multiply")
 print("4.Divide")
 
-#Choice(Options)
+#Choice (Options)
 choice =input("Enter choice (1/2/3/4) ")
 
 n1=float(input("Enter first number: "))
