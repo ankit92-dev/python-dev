@@ -1,70 +1,94 @@
 import pygame
-import time
 import random
+import sys
 
-# Initialize pygame
+# Initialize Pygame and sound module (even though sound isn't used here, good habit)
 pygame.init()
+pygame.mixer.init()
 
-# Screen dimensions
+# Set up the screen size
 width, height = 600, 400
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption('🐍 Snake Game in Python')
+pygame.display.set_caption("🐍 Snake Game (BW Retro)")
 
-# Colors
-white = (255, 255, 255)
-black = (0, 0, 0)
-red   = (213, 50, 80)
-green = (0, 255, 0)
-blue  = (50, 153, 213)
+# Define color values in RGB
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
-# Snake and food size
-block_size = 20
+# Load a basic font for displaying text
+font = pygame.font.SysFont("Courier New", 28)
+
+# Control how fast the game updates
 clock = pygame.time.Clock()
-font_style = pygame.font.SysFont(None, 30)
-score_font = pygame.font.SysFont(None, 35)
 
-def message(msg, color):
-    text = font_style.render(msg, True, color)
-    screen.blit(text, [width // 6, height // 3])
+# Size of each block that makes up the snake and food
+block_size = 20
 
-def draw_snake(snake_blocks):
-    for block in snake_blocks:
-        pygame.draw.rect(screen, black, [block[0], block[1], block_size, block_size])
+# Function to draw text on the screen
+def draw_text(text, x, y):
+    label = font.render(text, True, WHITE)
+    screen.blit(label, (x, y))
 
-def game_loop():
-    game_over = False
-    game_close = False
+# Function to draw the snake using a list of (x, y) positions
+def draw_snake(snake_list):
+    for x, y in snake_list:
+        pygame.draw.rect(screen, WHITE, [x, y, block_size, block_size])
 
-    x = width // 2
-    y = height // 2
-    x_change = 0
-    y_change = 0
+# Function to show the menu and let player choose difficulty
+def show_menu():
+    while True:
+        screen.fill(BLACK)
+        draw_text("🐍 SNAKE GAME", 200, 100)
+        draw_text("1. Play Easy", 220, 150)
+        draw_text("2. Play Medium", 220, 190)
+        draw_text("3. Play Hard", 220, 230)
+        draw_text("Q. Quit", 220, 270)
+        pygame.display.update()
 
-    snake = []
-    snake_length = 1
-
-    food_x = round(random.randrange(0, width - block_size) / 20.0) * 20.0
-    food_y = round(random.randrange(0, height - block_size) / 20.0) * 20.0
-
-    while not game_over:
-
-        while game_close:
-            screen.fill(blue)
-            message("Game Over! Press Q to Quit or C to Play Again", red)
-            pygame.display.update()
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        game_over = True
-                        game_close = False
-                    elif event.key == pygame.K_c:
-                        game_loop()
-
+        # Wait for player input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_over = True
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
+                # Return the speed (lower is slower, higher is harder)
+                if event.key == pygame.K_1:
+                    return 10
+                elif event.key == pygame.K_2:
+                    return 15
+                elif event.key == pygame.K_3:
+                    return 20
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
+
+# Main game loop function
+def game_loop(speed):
+    # Initial position of the snake's head
+    x, y = width // 2, height // 2
+
+    # Initial movement direction
+    x_change, y_change = 0, 0
+
+    # Snake is a list of blocks (each block is [x, y])
+    snake = []
+    snake_len = 1
+
+    # Generate initial food position
+    food_x = random.randint(0, (width - block_size) // block_size) * block_size
+    food_y = random.randint(0, (height - block_size) // block_size) * block_size
+
+    running = True
+    while running:
+        screen.fill(BLACK)
+
+        # Handle keyboard and quit events
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                break
+            elif event.type == pygame.KEYDOWN:
+                # Change snake direction with arrow keys
                 if event.key == pygame.K_LEFT:
                     x_change = -block_size
                     y_change = 0
@@ -78,35 +102,66 @@ def game_loop():
                     y_change = block_size
                     x_change = 0
 
+        # Move the snake's head
         x += x_change
         y += y_change
 
-        if x >= width or x < 0 or y >= height or y < 0:
-            game_close = True
+        # Check for collision with the wall
+        if x < 0 or x >= width or y < 0 or y >= height:
+            break  # End the game
 
-        screen.fill(blue)
-        pygame.draw.rect(screen, green, [food_x, food_y, block_size, block_size])
+        # Draw the food on screen
+        pygame.draw.rect(screen, WHITE, [food_x, food_y, block_size, block_size])
 
+        # Add new head position to snake list
         snake.append([x, y])
-        if len(snake) > snake_length:
+
+        # Remove tail if snake didn't just grow
+        if len(snake) > snake_len:
             del snake[0]
 
-        for block in snake[:-1]:
-            if block == [x, y]:
-                game_close = True
+        # Check for self-collision
+        for segment in snake[:-1]:
+            if segment == [x, y]:
+                running = False  # End the game if head touches body
 
+        # Draw the snake on screen
         draw_snake(snake)
+
+        # Update the screen
         pygame.display.update()
 
+        # Check if the snake ate the food
         if x == food_x and y == food_y:
-            food_x = round(random.randrange(0, width - block_size) / 20.0) * 20.0
-            food_y = round(random.randrange(0, height - block_size) / 20.0) * 20.0
-            snake_length += 1
+            snake_len += 1  # Make snake longer
+            # Generate new food
+            food_x = random.randint(0, (width - block_size) // block_size) * block_size
+            food_y = random.randint(0, (height - block_size) // block_size) * block_size
 
-        clock.tick(10)  # Adjust speed here
+        # Control the game speed
+        clock.tick(speed)
 
-    pygame.quit()
-    quit()
+    # Show game over screen
+    screen.fill(BLACK)
+    draw_text("GAME OVER - Press C to Continue or Q to Quit", 40, height // 2 - 20)
+    pygame.display.update()
+    wait_for_restart(speed)
 
+# Wait for player to restart or quit
+def wait_for_restart(speed):
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_c:
+                    game_loop(speed)  # Restart the game
+
+# Entry point of the program
 if __name__ == "__main__":
-    game_loop()
+    speed = show_menu()   # Show the menu and get difficulty speed
+    game_loop(speed)      # Start the game
